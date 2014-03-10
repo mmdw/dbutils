@@ -1,4 +1,4 @@
-package dbhelper;
+package edu.m4c.fcheck;
 
 import java.io.FileInputStream;
 import java.io.IOException;

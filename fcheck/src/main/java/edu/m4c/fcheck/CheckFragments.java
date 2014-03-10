@@ -7,9 +7,8 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import dbhelper.FragmentChecker;
-import dbhelper.FragmentChecker.CheckingResult;
 import dbhelper.db.Database;
+import edu.m4c.fcheck.FragmentChecker.CheckingResult;
 
 public class CheckFragments {
 	public static void main(String[] args) throws SQLException {
