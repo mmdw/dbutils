@@ -55,9 +55,11 @@ public class KVDiff {
 			
 			String[] data = line.split("\\s+");
 			String key = data[0];
-			String value = data[1];
 			
-			kv.put(key, value);
+			if (data.length > 0) {
+				String value = data[1]; 
+				kv.put(key, value);
+			} 
 		}
 		
 		sc.close();
