@@ -70,7 +70,11 @@ public class AskAdviceAction {
 		
 		while (iter.hasNext()) {
 			BindVariable bv = iter.next();
-			sb.append(String.format("anydata.ConvertNumber(%s)", bv.getValue()));
+			if (bv.getType() == Types.NUMERIC) {
+				sb.append(String.format("anydata.ConvertNumber(%s)", bv.getValue()));
+			} else {
+				throw new IllegalStateException();
+			}
 			
 			if (iter.hasNext()) {
 				sb.append(",");
