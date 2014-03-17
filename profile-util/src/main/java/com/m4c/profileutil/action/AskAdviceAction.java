@@ -72,6 +72,9 @@ public class AskAdviceAction {
 			BindVariable bv = iter.next();
 			if (bv.getType() == Types.NUMERIC) {
 				sb.append(String.format("anydata.ConvertNumber(%s)", bv.getValue()));
+			} else 
+			if (bv.getType() == Types.VARCHAR){
+				sb.append(String.format("anydata.ConvertVarchar2('%s')", bv.getValue()));
 			} else {
 				throw new IllegalStateException();
 			}

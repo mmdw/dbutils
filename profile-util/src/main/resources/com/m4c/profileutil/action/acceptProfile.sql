@@ -5,6 +5,7 @@ BEGIN
  profile_name := DBMS_SQLTUNE.accept_sql_profile (
 	task_name => ?,
     task_owner => 'VOSHOD',
+	force_match => TRUE,
 	replace => TRUE
  );
  

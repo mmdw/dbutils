@@ -49,6 +49,31 @@ public class TestTimeAction {
 		
 		long elapsedTime = executeQuery(conn, sql);
 		logger.debug(String.format("elapsed: %s ms", elapsedTime));
+		
+		getLastQueryPlan(conn);
+	}
+
+	private static void getLastQueryPlan(Connection conn) {
+		Statement st = null;
+		try {
+			String sql = "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(format => 'ALL'))";
+			 st = conn.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			
+			while (rs.next()) {
+				System.out.println(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (st != null) {
+				try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private static void setSqltuneCategory(Connection conn, String category) {

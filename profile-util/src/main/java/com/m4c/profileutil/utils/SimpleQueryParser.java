@@ -116,6 +116,6 @@ public class SimpleQueryParser {
 	}
 
 	public String getQueryBody() {
-		return queryData;
+		return queryData.trim();
 	}
 }
