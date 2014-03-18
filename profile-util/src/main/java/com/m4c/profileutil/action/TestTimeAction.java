@@ -61,7 +61,7 @@ public class TestTimeAction {
 			ResultSet rs = st.executeQuery(sql);
 			
 			while (rs.next()) {
-				System.out.println(rs.getString(1));
+				logger.debug(rs.getString(1));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
