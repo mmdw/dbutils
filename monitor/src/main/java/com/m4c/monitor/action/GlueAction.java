@@ -24,16 +24,16 @@ public class GlueAction {
 		}
 	};
 	
-	private Comparator<String> nameComparator = new Comparator<String>() {
+	private Comparator<File> nameComparator = new Comparator<File>() {
 
 		@Override
-		public int compare(String o1, String o2) {
+		public int compare(File o1, File o2) {
 			return getIndex(o1) - getIndex(o2);
 		}
 
-		private int getIndex(String o1) {
-			int dot = o1.lastIndexOf(".");
-			return Integer.valueOf(o1.substring(dot + 1));
+		private int getIndex(File o1) {
+			int dot = o1.getName().lastIndexOf(".");
+			return Integer.valueOf(o1.getName().substring(dot + 1));
 		}
 	};
 
@@ -64,24 +64,35 @@ public class GlueAction {
 
 	private void processFiles(File[] listFiles) {
 		for (File logFile : listFiles) {
-			String[] parts = logFile.getParentFile().list(makeLogFileFilter(logFile));
-			Collections.sort(Arrays.asList(parts), nameComparator);
+			File[] parts = logFile.getParentFile().listFiles(makeLogFileFilter(logFile));
 			
-			for (String part: parts) {
-				append(logFile, part);
-				System.out.println(logFile.getName() + ": " + part);
+			if (parts.length == 0) {
+				continue;
+			}
+			
+			Collections.sort(Arrays.asList(parts), Collections.reverseOrder(nameComparator));
+
+			for (int i = 1; i < parts.length; ++i) {
+				append(parts[0], parts[i]);
+			}
+			
+			append(parts[0], logFile);
+			
+			parts[0].renameTo(logFile);
+			
+			for (File part: parts) {
+				System.out.println(logFile.getName() + ": " + part.getName());
 			}
 		}
 	}
 
-	private void append(File logFile, String part) {
+	private void append(File logFile, File part) {
 		FileOutputStream fos = null;
 		FileInputStream fin = null;
-		File iFile = new File(logFile.getParentFile().getAbsolutePath() + File.separator + part);
 		
 		try {
 			fos = new FileOutputStream(logFile, true);
-			fin = new FileInputStream(iFile);
+			fin = new FileInputStream(part);
 			
 			IOUtils.copy(fin, fos);
 			
@@ -107,7 +118,7 @@ public class GlueAction {
 			}
 		}
 		
-		iFile.delete();
+		part.delete();
 	}
 
 	private FilenameFilter makeLogFileFilter(final File logFile) {
