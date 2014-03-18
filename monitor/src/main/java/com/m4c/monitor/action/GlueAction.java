@@ -52,14 +52,17 @@ public class GlueAction {
 	
 	public void glueLogs(File dir) {
 		LinkedList<File> files = new LinkedList<File>();
-		files.addAll(Arrays.asList(dir.listFiles()));
+		
+		files.addAll(Arrays.asList(dir.listFiles(directoryFilter)));
+		processFiles(dir.listFiles(logFilter));
 		
 		while (!files.isEmpty()) {
 			dir = files.pop();
-			files.addAll(Arrays.asList(dir.listFiles(directoryFilter)));
-			
-			processFiles(dir.listFiles(logFilter));
-		}
+			if (dir.isDirectory()) {
+				files.addAll(Arrays.asList(dir.listFiles(directoryFilter)));
+				processFiles(dir.listFiles(logFilter));
+			}
+		}	
 	}
 
 	private void processFiles(File[] listFiles) {

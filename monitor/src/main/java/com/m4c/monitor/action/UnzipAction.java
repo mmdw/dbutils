@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream;
 
 public class UnzipAction {
 	private final static SimpleDateFormat format 
-		= new SimpleDateFormat("yyyy.MM.dd-HH.mm.ss");
+		= new SimpleDateFormat("yyyy_MM_dd-HH_mm_ss");
 	
 	public Path unzip(Path file, File destDirectory) throws IOException {
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(file.toAbsolutePath().toFile()));
@@ -36,11 +36,25 @@ public class UnzipAction {
 		}
 		zis.close();
 		
-		File newFile = new File(destDirectory.getAbsolutePath() + File.separator + "logs-" + format.format(new Date(maxTime)));
+		String newName = "logs-" + format.format(new Date(maxTime));
+		File newFile = rename(destDirectory, tempDir, newName);
+		return newFile.toPath();
+	}
+
+	private File rename(File destDirectory, Path tempDir, String newName)
+			throws IOException {
+		
+		String newPath = destDirectory.getAbsolutePath() + File.separator + newName;
+		
+		File newFile = new File(newPath);
+		int i = 1;
+		while (newFile.exists()) {
+			newFile = new File(newPath + "-" + i);
+		}
+		
 		Files.move(tempDir, newFile.toPath());
 		tempDir.toFile().renameTo(newFile);
-		
-		return newFile.toPath();
+		return newFile;
 	}
 
 	private void extractFile(ZipInputStream in, File outdir, String name) throws IOException {
