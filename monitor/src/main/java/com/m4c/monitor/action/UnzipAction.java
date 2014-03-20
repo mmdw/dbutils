@@ -18,27 +18,30 @@ public class UnzipAction {
 	
 	public Path unzip(Path file, File destDirectory) throws IOException {
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(file.toAbsolutePath().toFile()));
-		ZipEntry entry;
 
 		long maxTime = -1;
 		
 		Path tempDirName = destDirectory.toPath().resolve("monitor" + String.valueOf(new Date().getTime()));
 		
 		Path tempDir = Files.createDirectory(tempDirName);
+		ZipEntry entry;
 		while ((entry = zis.getNextEntry()) != null) {
 			String entryName = entry.getName();
+			Path targetFile = tempDir.resolve(entryName);
+			if (entry.isDirectory()) {
+				Files.createDirectories(targetFile);
+				continue;
+			}
 			
 			maxTime = maxTime < entry.getTime() ? entry.getTime() : maxTime;
 
-			Path targetFile = tempDir.resolve(entryName);
 			targetFile.getParent().toFile().mkdirs();
 			extractFile(zis, targetFile.getParent().toFile(), targetFile.getFileName().toString());
 		}
 		zis.close();
 		
 		String newName = "logs-" + format.format(new Date(maxTime));
-		File newFile = rename(destDirectory, tempDir, newName);
-		return newFile.toPath();
+		return rename(destDirectory, tempDir, newName).toPath();
 	}
 
 	private File rename(File destDirectory, Path tempDir, String newName)
