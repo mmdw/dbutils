@@ -1,11 +1,11 @@
 package edu.m4c.fcheck;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 
 import dbhelper.db.Database;
 import edu.m4c.fcheck.FragmentChecker.CheckingResult;
@@ -17,13 +17,17 @@ public class CheckFragments {
 
 	private void start(String[] args) {
 		try {
-			Properties props = findProps();
-			Database db = new Database(
-				props.getProperty("jdbcUrl"), 
-				props.getProperty("name"), 
-				props.getProperty("password")
-			);
-			fcheck(args, db);
+			Options options = new Options();
+			options.addOption("url", true, "JDBC Url");
+			
+			
+			DefaultParser parser = new DefaultParser();
+			CommandLine cmdLine = parser.parse(options, args);
+
+			checkOptions(cmdLine);
+			
+			Database db = new Database(cmdLine.getOptionValue("url"));
+			fcheck(cmdLine.getArgs(), db);
 			db.close();
 			
 		} catch (Exception e) {
@@ -31,19 +35,11 @@ public class CheckFragments {
 		}
 	}
 
-	private Properties findProps() throws IOException, FileNotFoundException {
-		Properties props = new Properties();
-		
-		InputStream propsfromClasspath = this.getClass().getClassLoader()
-		        .getResourceAsStream("config.properties");
-		
-		if (propsfromClasspath != null) {
-			props.load(propsfromClasspath);
-		} else {
-			props.load(new FileReader("config.properties"));
+	private void checkOptions(CommandLine cmdLine) {
+		if (!cmdLine.hasOption("url")) {
+			System.err.println("syntax: \n\t java -jar fcheck.jar -url <jdbc url> <file1> <file2> ...");
+			System.exit(1);
 		}
-		
-		return props;
 	}
 
 	private void fcheck(String[] args, Database db) throws IOException {

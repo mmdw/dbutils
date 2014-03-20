@@ -52,6 +52,15 @@ public class Database {
 		fillCons();
 	}
 	
+	public Database(String optionValue) throws SQLException {
+		Locale.setDefault(Locale.ENGLISH);
+		conn = DriverManager.getConnection(optionValue);
+		
+		getTables();
+		fillTables();
+		fillCons();	
+	}
+
 	public void close() {
 		try {
 			conn.close();
