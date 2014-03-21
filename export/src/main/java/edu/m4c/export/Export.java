@@ -1,53 +1,41 @@
 package edu.m4c.export;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import dbhelper.db.Database;
 
 public class Export {
-	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println("syntax: <export> table_name pk_value");
+	public static void main(String[] args) throws ParseException {
+		Options options = new Options();
+		options.addOption("url", true, "jdbc url");
+		
+		CommandLineParser parser = new BasicParser();
+		CommandLine cmd = parser.parse(options, args);
+		
+		if (!cmd.hasOption("url")) {
+			System.out.println("syntax:\n\t<export> -url <jdbc_url> table_name pk_value");
 		} else {
-			new Export().start(args);
+			new Export().start(cmd);
 		}
-	}
-
-	private Properties findProps() throws IOException, FileNotFoundException {
-		Properties props = new Properties();
-		
-		InputStream propsfromClasspath = this.getClass().getClassLoader()
-		        .getResourceAsStream("config.properties");
-		
-		if (propsfromClasspath != null) {
-			props.load(propsfromClasspath);
-		} else {
-			props.load(new FileReader("config.properties"));
-		}
-		
-		return props;
 	}
 	
-	private void start(String[] args) {
+	private void start(CommandLine cmd) {
 		try {
-			Properties props = findProps();
 			Database db = new Database(
-				props.getProperty("jdbcUrl"), 
-				props.getProperty("name"), 
-				props.getProperty("password")
+				cmd.getOptionValue("url")
 			);
 			
-			String tableName = args[0].toUpperCase();
+			String tableName = cmd.getArgs()[0].toUpperCase();
 			if (db.getTable(tableName) == null) {
 				System.err.println("unknown table: " + tableName);
 				return;
 			}
 			
-			Long pkValue = Long.valueOf(args[1]);
+			Long pkValue = Long.valueOf(cmd.getArgs()[1]);
 			new ExportA(db).export(tableName, pkValue);
 			
 			db.close();

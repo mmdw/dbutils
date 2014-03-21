@@ -32,16 +32,16 @@ public class FragmentChecker {
 	private Map<String, Set<Long>> keys = new HashMap<>();
 	protected Table table;
 
-	private CheckingResult result;
+	private CheckResult result;
 
 	public FragmentChecker(Database db) {
 		this.db = db;
 	}
 
-	public CheckingResult check(String name) throws IOException {
+	public CheckResult check(String name) throws IOException {
 		keys.clear();
 		
-		this.result = new CheckingResult();
+		this.result = new CheckResult();
 		DataStream ds = new DataStream(name);
 		
 		processXml(ds);
@@ -140,7 +140,7 @@ public class FragmentChecker {
 		}
 	}
 	
-	public class CheckingResult {
+	public class CheckResult {
 		private List<String> messages = new LinkedList<>();
 		private int repeated;
 		

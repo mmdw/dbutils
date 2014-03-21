@@ -8,7 +8,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 
 import dbhelper.db.Database;
-import edu.m4c.fcheck.FragmentChecker.CheckingResult;
+import edu.m4c.fcheck.FragmentChecker.CheckResult;
 
 public class CheckFragments {
 	public static void main(String[] args) throws SQLException {
@@ -19,7 +19,6 @@ public class CheckFragments {
 		try {
 			Options options = new Options();
 			options.addOption("url", true, "JDBC Url");
-			
 			
 			DefaultParser parser = new DefaultParser();
 			CommandLine cmdLine = parser.parse(options, args);
@@ -46,7 +45,7 @@ public class CheckFragments {
 		FragmentChecker checker = new FragmentChecker(db);
 		
 		for (String fileName : args) {
-			CheckingResult result = checker.check(fileName);
+			CheckResult result = checker.check(fileName);
 			if (!result.getMessages().isEmpty()) {
 				System.out.println("Bad file: " + fileName);
 				for (String message : result.getMessages()) {

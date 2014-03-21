@@ -5,18 +5,15 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.m4c.monitor.action.GlueAction;
+import com.m4c.monitor.action.Util;
 
 public class ProcessorTest {
 
 	@Test
 	public void test() throws IOException {
-		String path = "D:\\opt\\logProcessor\\logs.zip";
-		String dirPath = "D:\\Temp\\monitor829894736725683312";
+		String dirPath = "D:\\Temp\\aaaa";
+
+		Util.testContent(new File("C:\\Users\\user\\Desktop\\testDir\\logs.rar"));
 		
-//		Path dir = new UnzipAction().unzip(new File(path).toPath());
-		
-		File dir = new File(dirPath);
-		new GlueAction().glueLogs(dir);
 	}
 }
