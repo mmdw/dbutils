@@ -130,7 +130,9 @@ public class Database {
 
 			rs = st.executeQuery(SELECT_COLUMNS);
 			while (rs.next()) {
-				tables.get(rs.getString(1)).addColumn(rs.getString(2), rs.getString(3));
+				if (tables.containsKey(rs.getString(1))) {
+					tables.get(rs.getString(1)).addColumn(rs.getString(2), rs.getString(3));
+				}
 			}
 			
 			rs.close();
